@@ -1,0 +1,5 @@
+# Request to Service
+string input
+---
+# Response to Service
+string output
