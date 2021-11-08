@@ -1,7 +1,70 @@
-#include "ros/ros.h"
-#include "std_msgs/String.h"
+/**
+ * BSD 3-Clause LICENSE
+ *
+ * Copyright (c) 2018, Anirudh Topiwala
+ * All rights reserved. 
+ * 
+ * Redistribution and use in source and binary forms, with or without  
+ * modification, are permitted provided that the following conditions are 
+ * met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, 
+ * this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright 
+ * notice, this list of conditions and the following disclaimer in the   
+ * documentation and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its 
+ * contributors may be used to endorse or promote products derived from this 
+ * software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS 
+ * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
+ * CONTRIBUTORS BE 
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+/**
+ *  @file    talker.cpp
+ *  @author  Anirudh Topiwala
+ *  @copyright BSD License
+ *
+ *  @brief Implementing publisher and subscriber node
+ *
+ *  @section DESCRIPTION
+ *
+ *  This program defines the publisher
+ *
+ */
 
+#include <globalstringinitialize.h>
 #include <sstream>
+#include "ros/ros.h"
+#include "beginner_tutorials/change_output_string.h"
+
+/**
+ * @brief changestring is a function to change the string being published.
+ * 
+ * @param req (request) is the paramter that accepts the request argument.
+ * @param res (response) is the parameter that accepts the repsonse argument.
+ * 
+ * @return true if no errors
+ */
+bool changeString(beginner_tutorials::change_output_string::Request &req,
+                  beginner_tutorials::change_output_string::Response &res) {
+  res.output = req.input;
+  text = res.output;
+  ROS_WARN_STREAM("Changing the String due to Service call");
+  return true;
+}
 
 /**
  * This tutorial demonstrates simple sending of messages over the ROS system.
@@ -26,6 +89,33 @@ int main(int argc, char **argv) {
    */
   ros::NodeHandle n;
 
+  int f = 10;
+
+  /* setting the frequency value to the input/default frequency
+   * passed by launch file.
+   */
+
+  if (argc > 1) {
+    f = atoi(argv[1]);
+    ROS_DEBUG_STREAM(" Input entered is " << f);
+  }
+  // Warning if the frequency is less than 0
+  if (f < 0) {
+    ROS_ERROR_STREAM("Frequency cannot be negative");
+    f = 1;
+    ROS_WARN_STREAM("Frequency set to a small value of 1 HZ");
+  }
+  // Showing Fatal message if frequency is 0
+  if (f == 0) {
+    ROS_FATAL_STREAM("Frequency cannot be 0."
+      "Please launch again with valid inputs");
+    system("rosnode kill /listener");
+    system("rosnode kill /publisher");
+    ros::shutdown();
+    return 0;
+  }
+
+
   /**
    * The advertise() function is how you tell ROS that you want to
    * publish on a given topic name. This invokes a call to the ROS
@@ -43,9 +133,11 @@ int main(int argc, char **argv) {
    * than we can send them, the number here specifies how many messages to
    * buffer up before throwing some away.
    */
-  ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
+  auto chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
 
-  ros::Rate loop_rate(10);
+  auto server = n.advertiseService("Change_String", changeString);
+
+  ros::Rate loop_rate(f);
 
   /**
    * A count of how many messages we have sent. This is used to create
@@ -59,7 +151,7 @@ int main(int argc, char **argv) {
     std_msgs::String msg;
 
     std::stringstream ss;
-    ss << "Hello, Robots are awesome" << count;
+    ss << text << count;
     msg.data = ss.str();
 
     ROS_INFO("%s", msg.data.c_str());
@@ -77,6 +169,7 @@ int main(int argc, char **argv) {
     loop_rate.sleep();
     ++count;
   }
+
 
   return 0;
 }
