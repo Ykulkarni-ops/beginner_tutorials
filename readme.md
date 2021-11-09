@@ -1,5 +1,5 @@
 # ROS Beginner Tutorials - Introduction to Publisher and Subscriber  
-[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+
 ---
 
 ## Overview
@@ -20,7 +20,7 @@ To run this code in a catkin workspace:
 cd ~/catkin_ws/
 source devel/setup.bash
 cd src/
-git clone -b Week10_HW --single-branch https://github.com/anirudhtopiwala/beginner_tutorials.git
+git clone -b Week10_HW --single-branch https://github.com/Ykulkarni-ops/beginner_tutorials.git
 cd ..
 catkin_make
 ```
@@ -31,7 +31,7 @@ cd ~/catkin_ws/
 catkin_make
 source devel/setup.bash
 cd src/
-git clone -b Week10_HW --single-branch https://github.com/anirudhtopiwala/beginner_tutorials.git
+git clone -b Week10_HW --single-branch https://github.com/Ykulkarni-ops/beginner_tutorials.git
 cd ..
 catkin_make
 ```
