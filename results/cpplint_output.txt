@@ -1,4 +1,3 @@
-Done processing /home/yash/catkin_ws/src/beginner_tutorials/launch/week10.launch
 Done processing /home/yash/catkin_ws/src/beginner_tutorials/src/listener.cpp
 Done processing /home/yash/catkin_ws/src/beginner_tutorials/src/talker.cpp
 Total errors found: 2

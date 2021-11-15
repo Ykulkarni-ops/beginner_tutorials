@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   message_generation 
   genmsg
+  tf
 )
 
 ## Generate services in the 'srv' folder
@@ -51,3 +52,21 @@ target_link_libraries(listener ${catkin_LIBRARIES})
 
 add_dependencies(talker beginner_tutorials_generate_messages_cpp)
 add_dependencies(listener beginner_tutorials_generate_messages_cpp)
+
+if(CATKIN_ENABLE_TESTING)
+  find_package(rostest REQUIRED)
+  add_rostest_gtest(
+    test_talker
+    test/test.launch
+    test/main.cpp
+    test/test.cpp
+  )
+  target_link_libraries( test_talker ${catkin_LIBRARIES})
+  
+add_dependencies(
+    test_talker
+    talker
+    listener
+    ${catkin_EXPORTED_TARGETS}
+  )
+endif()

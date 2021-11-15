@@ -1,0 +1,32 @@
+<launch>
+  <arg
+    name  ="f"
+    default = "10"
+/>
+<arg
+    name  ="record"
+    default = "disable"
+/>
+
+ <node
+    name = "publisher"
+    pkg = "beginner_tutorials"
+    type = "talker"
+    output = "screen" 
+    args = "$(arg f)"
+  />
+  <node
+    name = "subscriber"
+    pkg = "beginner_tutorials"
+    type = "listener"
+    output = "screen"
+    launch-prefix = "gnome-terminal -e"
+   />
+    <node
+    name = "rosbag"
+    pkg = "rosbag"
+    type = "record"
+    args = "-a -O $(find beginner_tutorials)/results/talker.bag"
+    if = "$(eval record == 'enable')"
+   />
+</launch>
